@@ -5,10 +5,17 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.control.ControllerManager;
 
+import javax.naming.ldap.Control;
 
 
 /**
@@ -19,6 +26,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot
 {
+    public PWMMotorController motorFrontLeft;
+    public PWMMotorController motorFrontRight;
+    public PWMMotorController motorBackLeft;
+    public PWMMotorController motorBackRight;
+    public MotorControllerGroup motorLeft;
+    public MotorControllerGroup motorRight;
+    public DifferentialDrive drive;
     private static final String DEFAULT_AUTO = "Default";
     private static final String CUSTOM_AUTO = "My Auto";
     private String autoSelected;
@@ -35,6 +49,14 @@ public class Robot extends TimedRobot
         chooser.setDefaultOption("Default Auto", DEFAULT_AUTO);
         chooser.addOption("My Auto", CUSTOM_AUTO);
         SmartDashboard.putData("Auto choices", chooser);
+        motorFrontLeft = new PWMSparkMax(RobotMap.Motors.FRONT_LEFT);
+        motorFrontRight = new PWMSparkMax(RobotMap.Motors.FRONT_RIGHT);
+        motorBackLeft = new PWMSparkMax(RobotMap.Motors.BACK_LEFT);
+        motorBackRight = new PWMSparkMax(RobotMap.Motors.BACK_RIGHT);
+        motorRight = new MotorControllerGroup(motorFrontRight, motorBackRight);
+        motorLeft = new MotorControllerGroup(motorBackLeft, motorFrontLeft);
+        drive = new DifferentialDrive(motorLeft, motorRight);
+        ControllerManager.init();
     }
     
     
@@ -46,7 +68,12 @@ public class Robot extends TimedRobot
      * SmartDashboard integrated updating.
      */
     @Override
-    public void robotPeriodic() {}
+    public void robotPeriodic() {
+        motorFrontLeft.feed();
+        motorFrontRight.feed();
+        motorBackLeft.feed();
+        motorBackRight.feed();
+    }
     
     
     /**
@@ -92,7 +119,18 @@ public class Robot extends TimedRobot
     
     /** This method is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+        double y = ControllerManager.getMainController().getLeftY();
+        double x = ControllerManager.getMainController().getRightX();
+        if (y != 0 && x != 0) {
+            System.out.println("Y: " + y + " X: " + x);
+        }
+        drive.arcadeDrive(y, x);
+        if (ControllerManager.getMainController().getBButton()) {
+            drive.stopMotor();
+            System.out.println("Motors Stopped.");
+        }
+    }
     
     
     /** This method is called once when the robot is disabled. */
