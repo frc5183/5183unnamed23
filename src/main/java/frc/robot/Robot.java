@@ -5,17 +5,13 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.PWM;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.control.ControllerManager;
-
-import javax.naming.ldap.Control;
 
 
 /**
@@ -26,10 +22,10 @@ import javax.naming.ldap.Control;
  */
 public class Robot extends TimedRobot
 {
-    public PWMMotorController motorFrontLeft;
-    public PWMMotorController motorFrontRight;
-    public PWMMotorController motorBackLeft;
-    public PWMMotorController motorBackRight;
+    public WPI_VictorSPX motorFrontLeft;
+    public WPI_VictorSPX motorFrontRight;
+    public WPI_VictorSPX motorBackLeft;
+    public WPI_VictorSPX motorBackRight;
     public MotorControllerGroup motorLeft;
     public MotorControllerGroup motorRight;
     public DifferentialDrive drive;
@@ -49,10 +45,10 @@ public class Robot extends TimedRobot
         chooser.setDefaultOption("Default Auto", DEFAULT_AUTO);
         chooser.addOption("My Auto", CUSTOM_AUTO);
         SmartDashboard.putData("Auto choices", chooser);
-        motorFrontLeft = new PWMSparkMax(RobotMap.Motors.FRONT_LEFT);
-        motorFrontRight = new PWMSparkMax(RobotMap.Motors.FRONT_RIGHT);
-        motorBackLeft = new PWMSparkMax(RobotMap.Motors.BACK_LEFT);
-        motorBackRight = new PWMSparkMax(RobotMap.Motors.BACK_RIGHT);
+        motorFrontLeft = new WPI_VictorSPX(RobotMap.Motors.FRONT_LEFT);
+        motorFrontRight = new WPI_VictorSPX(RobotMap.Motors.FRONT_RIGHT);
+        motorBackLeft = new WPI_VictorSPX(RobotMap.Motors.BACK_LEFT);
+        motorBackRight = new WPI_VictorSPX(RobotMap.Motors.BACK_RIGHT);
         motorRight = new MotorControllerGroup(motorFrontRight, motorBackRight);
         motorLeft = new MotorControllerGroup(motorBackLeft, motorFrontLeft);
         drive = new DifferentialDrive(motorLeft, motorRight);
