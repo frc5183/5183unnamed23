@@ -5,10 +5,11 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.control.ControllerManager;
@@ -22,13 +23,13 @@ import frc.robot.control.ControllerManager;
  */
 public class Robot extends TimedRobot
 {
-    public WPI_VictorSPX motorFrontLeft;
-    public WPI_VictorSPX motorFrontRight;
-    public WPI_VictorSPX motorBackLeft;
-    public WPI_VictorSPX motorBackRight;
+    public PWMMotorController motorFrontLeft;
+    public PWMMotorController motorFrontRight;
+    public PWMMotorController motorBackLeft;
+    public PWMMotorController motorBackRight;
     public MotorControllerGroup motorLeft;
     public MotorControllerGroup motorRight;
-    public DifferentialDrive drive;
+    public MecanumDrive drive;
     private static final String DEFAULT_AUTO = "Default";
     private static final String CUSTOM_AUTO = "My Auto";
     private String autoSelected;
@@ -45,13 +46,11 @@ public class Robot extends TimedRobot
         chooser.setDefaultOption("Default Auto", DEFAULT_AUTO);
         chooser.addOption("My Auto", CUSTOM_AUTO);
         SmartDashboard.putData("Auto choices", chooser);
-        motorFrontLeft = new WPI_VictorSPX(RobotMap.Motors.FRONT_LEFT);
-        motorFrontRight = new WPI_VictorSPX(RobotMap.Motors.FRONT_RIGHT);
-        motorBackLeft = new WPI_VictorSPX(RobotMap.Motors.BACK_LEFT);
-        motorBackRight = new WPI_VictorSPX(RobotMap.Motors.BACK_RIGHT);
-        motorRight = new MotorControllerGroup(motorFrontRight, motorBackRight);
-        motorLeft = new MotorControllerGroup(motorBackLeft, motorFrontLeft);
-        drive = new DifferentialDrive(motorLeft, motorRight);
+        motorFrontLeft = new Spark(RobotMap.Motors.FRONT_LEFT);
+        motorFrontRight = new Spark(RobotMap.Motors.FRONT_RIGHT);
+        motorBackLeft = new Spark(RobotMap.Motors.BACK_LEFT);
+        motorBackRight = new Spark(RobotMap.Motors.BACK_RIGHT);
+        drive = new MecanumDrive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight);
         ControllerManager.init();
     }
     
@@ -69,6 +68,7 @@ public class Robot extends TimedRobot
         motorFrontRight.feed();
         motorBackLeft.feed();
         motorBackRight.feed();
+        System.out.println(motorFrontLeft.get() + " " + motorFrontRight.get() + " " + motorBackLeft.get() + " " + motorBackRight.get());
     }
     
     
@@ -116,12 +116,10 @@ public class Robot extends TimedRobot
     /** This method is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
-        double y = ControllerManager.getMainController().getLeftY();
-        double x = ControllerManager.getMainController().getRightX();
-        if (y != 0 && x != 0) {
-            System.out.println("Y: " + y + " X: " + x);
-        }
-        drive.arcadeDrive(y, x);
+        double x = ControllerManager.getMainController().getLeftY();
+        double y = ControllerManager.getMainController().getLeftX();
+        double z = ControllerManager.getMainController().getRightX();
+        drive.driveCartesian(x, y, z);
         if (ControllerManager.getMainController().getBButton()) {
             drive.stopMotor();
             System.out.println("Motors Stopped.");
