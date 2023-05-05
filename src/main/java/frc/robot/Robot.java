@@ -116,8 +116,8 @@ public class Robot extends TimedRobot
     /** This method is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
-        double y = ControllerManager.getMainController().getLeftY();
-        double x = ControllerManager.getMainController().getRightX();
+        double y = -ControllerManager.getMainController().getLeftY()*0.70;
+        double x = -ControllerManager.getMainController().getRightX()*0.70;
         if (y != 0 && x != 0) {
             System.out.println("Y: " + y + " X: " + x);
         }
