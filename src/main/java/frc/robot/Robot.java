@@ -5,7 +5,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -42,6 +44,8 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit()
     {
+        CameraServer.startAutomaticCapture();
+        CameraServer.startAutomaticCapture();
         chooser.setDefaultOption("Default Auto", DEFAULT_AUTO);
         chooser.addOption("My Auto", CUSTOM_AUTO);
         SmartDashboard.putData("Auto choices", chooser);
@@ -51,6 +55,10 @@ public class Robot extends TimedRobot
         motorBackRight = new WPI_VictorSPX(RobotMap.Motors.BACK_RIGHT);
         motorRight = new MotorControllerGroup(motorFrontRight, motorBackRight);
         motorLeft = new MotorControllerGroup(motorBackLeft, motorFrontLeft);
+        motorFrontRight.setNeutralMode(NeutralMode.Brake);
+        motorFrontLeft.setNeutralMode(NeutralMode.Brake);
+        motorBackRight.setNeutralMode(NeutralMode.Coast);
+        motorBackLeft.setNeutralMode(NeutralMode.Coast);
         drive = new DifferentialDrive(motorLeft, motorRight);
         ControllerManager.init();
     }
@@ -116,15 +124,23 @@ public class Robot extends TimedRobot
     /** This method is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
-        double y = -ControllerManager.getMainController().getLeftY()*0.70;
-        double x = -ControllerManager.getMainController().getRightX()*0.70;
+        double y = -ControllerManager.getMainController().getLeftY()*0.80;
+        double x = -ControllerManager.getMainController().getRightX()*0.80;
         if (y != 0 && x != 0) {
             System.out.println("Y: " + y + " X: " + x);
         }
         drive.arcadeDrive(y, x);
         if (ControllerManager.getMainController().getBButton()) {
-            drive.stopMotor();
-            System.out.println("Motors Stopped.");
+            motorRight.set(0);
+            motorLeft.set(0);
+        }
+
+        if (ControllerManager.getMainController().getLeftBumper()) {
+            motorLeft.set(0);
+        }
+
+        if (ControllerManager.getMainController().getRightBumper()) {
+            motorRight.set(0);
         }
     }
     
