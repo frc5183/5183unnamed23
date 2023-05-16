@@ -55,10 +55,10 @@ public class Robot extends TimedRobot
         motorBackRight = new WPI_VictorSPX(RobotMap.Motors.BACK_RIGHT);
         motorRight = new MotorControllerGroup(motorFrontRight, motorBackRight);
         motorLeft = new MotorControllerGroup(motorBackLeft, motorFrontLeft);
-        motorFrontRight.setNeutralMode(NeutralMode.Brake);
-        motorFrontLeft.setNeutralMode(NeutralMode.Brake);
-        motorBackRight.setNeutralMode(NeutralMode.Coast);
-        motorBackLeft.setNeutralMode(NeutralMode.Coast);
+//        motorFrontRight.setNeutralMode(NeutralMode.Brake);
+//        motorFrontLeft.setNeutralMode(NeutralMode.Brake);
+//        motorBackRight.setNeutralMode(NeutralMode.Coast);
+//        motorBackLeft.setNeutralMode(NeutralMode.Coast);
         drive = new DifferentialDrive(motorLeft, motorRight);
         ControllerManager.init();
     }
