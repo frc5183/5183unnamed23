@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2023.4.3"
+    id "edu.wpi.first.GradleRIO" version "2022.2.1"
     id "idea"
 }
 
@@ -13,6 +13,12 @@ def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 // Set this to true to enable desktop support.
 def includeDesktopSupport = true
+
+repositories {
+    maven {
+        url("https://frcmaven.wpi.edu/ui/native/wpilib-mvn-development-local/")
+    }
+}
 
 dependencies {
     implementation wpi.java.deps.wpilib()
